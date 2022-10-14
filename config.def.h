@@ -167,6 +167,8 @@ unsigned int defaultrcs = 257;
  */
 static unsigned int cursorshape = 1;
 
+#include "autocomplete.h"
+
 /*
  * Default columns and rows numbers
  */
@@ -237,7 +239,7 @@ static MouseShortcut mshortcuts[] = {
 
 /* Internal keyboard shortcuts. */
 #define MODKEY Mod1Mask
-#define TERMMOD (Mod4Mask|ShiftMask)
+#define TERMMOD (ControlMask|ShiftMask)
 
 MouseKey mkeys[] = {
   /* button               mask            function        argument */
@@ -255,45 +257,76 @@ static char *copyurlcmd[] = { "/bin/sh", "-c",
 
 static char *copyoutput[] = { "/bin/sh", "-c", "st-copyout", "externalpipe", NULL };
 
+#define ACMPL_MOD ControlMask|Mod1Mask
+
 static Shortcut shortcuts[] = {
   /* mask                 keysym          function        argument */
   { XK_ANY_MOD,           XK_Break,       sendbreak,      {.i =  0} },
   { ControlMask,          XK_Print,       toggleprinter,  {.i =  0} },
   { ShiftMask,            XK_Print,       printscreen,    {.i =  0} },
   { XK_ANY_MOD,           XK_Print,       printsel,       {.i =  0} },
-  { MODKEY,              XK_comma,       zoom,           {.f = +1} },
-  { MODKEY,              XK_period,        zoom,           {.f = -1} },
-  { MODKEY,               XK_g,        zoomreset,      {.f =  0} },
-  { ControlMask | ShiftMask,               XK_C,           clipcopy,       {.i =  0} },
-  { ShiftMask,            XK_Insert,      clippaste,      {.i =  0} },
-  { ControlMask | ShiftMask,               XK_V,           clippaste,      {.i =  0} },
-  { XK_ANY_MOD,		Button2,	selpaste,	{.i =  0} },
-  { MODKEY,               XK_Num_Lock,    numlock,        {.i =  0} },
-  { ControlMask | ShiftMask,               XK_U,           iso14755,       {.i =  0} },
-  { ShiftMask,            XK_Page_Up,     kscrollup,      {.i = -1} },
-  { ShiftMask,            XK_Page_Down,   kscrolldown,    {.i = -1} },
-  { MODKEY,               XK_Page_Up,     kscrollup,      {.i = -1} },
-  { MODKEY,               XK_Page_Down,   kscrolldown,    {.i = -1} },
-  { MODKEY,               XK_k,           kscrollup,      {.i =  1} },
-  { MODKEY,               XK_j,           kscrolldown,    {.i =  1} },
-  { MODKEY,               XK_Up,          kscrollup,      {.i =  1} },
-  { MODKEY,               XK_Down,        kscrolldown,    {.i =  1} },
-  { MODKEY,               XK_u,           kscrollup,      {.i = -1} },
-  { MODKEY,               XK_d,           kscrolldown,    {.i = -1} },
-  { MODKEY,		XK_s,		changealpha,	{.f = -0.05} },
-  { MODKEY,		XK_a,		changealpha,	{.f = +0.05} },
-  { MODKEY,		XK_m,		changealpha,	{.f = +2.00} },
+  /* Zoom */
+  { TERMMOD,              XK_Prior,       zoom,           {.f = +1} },
+  { TERMMOD,              XK_Next,        zoom,           {.f = -1} },
   { TERMMOD,              XK_Up,          zoom,           {.f = +1} },
   { TERMMOD,              XK_Down,        zoom,           {.f = -1} },
   { TERMMOD,              XK_K,           zoom,           {.f = +1} },
   { TERMMOD,              XK_J,           zoom,           {.f = -1} },
   { TERMMOD,              XK_U,           zoom,           {.f = +2} },
   { TERMMOD,              XK_D,           zoom,           {.f = -2} },
-  { MODKEY,               XK_l,           externalpipe,   {.v = openurlcmd } },
-  { MODKEY,               XK_y,           externalpipe,   {.v = copyurlcmd } },
-  { MODKEY,               XK_o,           externalpipe,   {.v = copyoutput } },
+  { TERMMOD,              XK_Home,        zoomreset,      {.f =  0} },
+  /* Copy paste */
+  { TERMMOD,              XK_C,           clipcopy,       {.i =  0} },
+  { TERMMOD,              XK_V,           clippaste,      {.i =  0} },
+  { MODKEY,               XK_c,           clipcopy,       {.i =  0} },
+  { MODKEY,               XK_v,           clippaste,      {.i =  0} },
+  { MODKEY,               XK_p,           selpaste,       {.i =  0} },
+  { TERMMOD,              XK_p,           selpaste,       {.i =  0} },
+  { ShiftMask,            XK_Insert,      selpaste,       {.i =  0} },
+  /* */
+  { TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
+  /* Open new terminal in current directory */
   { TERMMOD,              XK_Return,      newterm,        {.i =  0} },
-
+  /* Scroll */
+  { MODKEY,               XK_Page_Up,     kscrollup,      {.i = -1} },
+  { MODKEY,               XK_Page_Down,   kscrolldown,    {.i = -1} },
+  { MODKEY,               XK_Up,          kscrollup,      {.i =  1} },
+  { MODKEY,               XK_Down,        kscrolldown,    {.i =  1} },
+  { MODKEY,               XK_k,           kscrollup,      {.i =  1} },
+  { MODKEY,               XK_j,           kscrolldown,    {.i =  1} },
+  { MODKEY,               XK_u,           kscrollup,      {.i = -1} },
+  { MODKEY,               XK_d,           kscrolldown,    {.i = -1} },
+  /* Open url */
+  { MODKEY,               XK_l,           externalpipe,   {.v = openurlcmd } },
+  /* Copy url */
+  { MODKEY,               XK_y,           externalpipe,   {.v = copyurlcmd } },
+  /* Copy output of a command */
+  { MODKEY,               XK_o,           externalpipe,   {.v = copyoutput } },
+  /* Autocomplete - https://st.suckless.org/patches/autocomplete */
+  /* classical prefix-based completion for words */
+  { ControlMask|Mod1Mask, XK_slash,       autocomplete,   { .i = ACMPL_WORD        } },
+  /* fuzzy completion for words */
+  { ControlMask|Mod1Mask, XK_period,      autocomplete,   { .i = ACMPL_FUZZY_WORD  } },
+  /* fuzzy completion for arbitrary strings */
+  { ControlMask|Mod1Mask, XK_comma,       autocomplete,   { .i = ACMPL_FUZZY       } },
+  /* fuzzy completion for suffixes, disrespecting prefixes of both completion and given strings */
+  { ControlMask|Mod1Mask, XK_apostrophe,  autocomplete,   { .i = ACMPL_SUFFIX      } },
+  /* fuzzy completion for surrounded by quotes or braces strings, excluding surrounding */
+  { ControlMask|Mod1Mask, XK_semicolon,   autocomplete,   { .i = ACMPL_SURROUND    } },
+  /* completion for WORDS (in the Vim meaning) */
+  { ControlMask|Mod1Mask, XK_bracketright,autocomplete,   { .i = ACMPL_WWORD       } },
+  /* fuzzy completion for WORDS */
+  { ControlMask|Mod1Mask, XK_bracketleft, autocomplete,   { .i = ACMPL_FUZZY_WWORD } },
+  /* undo the completion (must be used right after a completion) */
+  { ControlMask|Mod1Mask, XK_equal,       autocomplete,   { .i = ACMPL_UNDO        } },
+  /* Keyboard select - https://st.suckless.org/patches/keyboard_select */
+  { TERMMOD,              XK_S,      keyboard_select,{.i =  0} },
+  /* Transparency */
+  { MODKEY,		XK_s,		changealpha,	{.f = -0.05} },
+  { MODKEY,		XK_a,		changealpha,	{.f = +0.05} },
+  { MODKEY,		XK_m,		changealpha,	{.f = +2.00} },
+  /* https://st.suckless.org/patches/iso14755/ */
+  /* { TERMMOD,               XK_U,           iso14755,       {.i =  0} }, */
 };
 
 /*

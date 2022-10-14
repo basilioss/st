@@ -62,9 +62,12 @@ Add `st.url = "github:siduck/st";` to your inputs and install `inputs.st.package
 - anygeometry
 - xresources
 - sync patch ( Better draw timing to reduce flicker/tearing and improve animation smoothness )
-- live reload ( change colors/fonts on the fly )
-  and more...
-  <br>
+- live reload ( change colors/fonts on the fly ) and more...
+
+## New patches:
+
+- [autocomplete](https://st.suckless.org/patches/autocomplete/) (Complete the currently typed word using the other words visible in the st window)
+- [keyboard select](https://st.suckless.org/patches/keyboard_select/) (Select and copy text with keyboard shortcuts)
 
 ## Xresources live-reload
 
@@ -84,29 +87,24 @@ alias rel="xrdb merge pathToXresourcesFile && kill -USR1 $(pidof st)"
 
 ## Default Keybindings<br>
 
-<pre>
-ctrl + shift + c        Copy  <br>
-ctrl + shift + v        Paste <br>
-right click on the terminal ( will paste the copied thing )
+| Keybinding              | Description                       |
+| ----------------------- | --------------------------------- |
+| `ctrl + shift + k`      | Zoom in                           |
+| `ctrl + shift + j`      | Zoom out                          |
+| `ctrl + shift + home`   | Reset Zoom                        |
+| `ctrl + shift + c`      | Copy                              |
+| `ctrl + shift + v`      | Paste                             |
+| `alt + j`               | Scroll down                       |
+| `alt + k`               | Scroll up                         |
+| `ctrl + shift + return` | Open a new terminal with same cwd |
+| `alt + l`               | Follow urls                       |
+| `alt + y`               | Copy url                          |
+| `alt + o`               | Copy the output of commands       |
+| `alt  + s`              | Increase Transparency             |
+| `alt  + a`              | Decrease Transparency             |
+| `alt  + m`              | Reset Transparency                |
 
-(Zoom)
-alt  + comma            Zoom in <br>
-alt  + .                Zoom out <br>
-alt  + g                Reset Zoom<br>
-
-(Transparency)
-alt  + s                Increase Transparency<br>
-alt  + a                Decrease Transparency<br>
-alt  + m                Reset Transparency<br>
-
-alt + k                 scroll down
-alt + j                 scroll up
-
-mod + shift + enter    open a new terminal with same cwd ( current working directory )
-</pre>
-
-you can change all of these in config.h
-<br>
+You can change all of these in config.h
 
 ## Themes/Fonts used
 

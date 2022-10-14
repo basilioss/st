@@ -50,6 +50,8 @@ install: st
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/st
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/st-copyout
 	chmod 755 $(DESTDIR)$(PREFIX)/bin/st-urlhandler
+	cp -f st-autocomplete $(DESTDIR)$(PREFIX)/bin
+	chmod 755 $(DESTDIR)$(PREFIX)/bin/st-autocomplete
 	mkdir -p $(DESTDIR)$(MANPREFIX)/man1
 	sed "s/VERSION/$(VERSION)/g" < st.1 > $(DESTDIR)$(MANPREFIX)/man1/st.1
 	chmod 644 $(DESTDIR)$(MANPREFIX)/man1/st.1
@@ -67,5 +69,6 @@ uninstall:
 	rm -f $(DESTDIR)$(MANPREFIX)/man1/st.1
 	rm -f $(DESTDIR)$(ICONPREFIX)/$(ICONNAME)
 	rm -f $(DESTDIR)$(PREFIX)/share/applications/st.desktop
+	rm -f $(DESTDIR)$(PREFIX)/bin/st-autocomplete
 
 .PHONY: all options clean dist install uninstall

@@ -93,6 +93,8 @@ typedef struct {
 	const Arg arg;
 } MouseKey;
 
+void autocomplete (const Arg *);
+
 void die(const char *, ...);
 void redraw(void);
 void draw(void);
@@ -132,6 +134,7 @@ size_t utf8encode(Rune, char *);
 void *xmalloc(size_t);
 void *xrealloc(void *, size_t);
 char *xstrdup(const char *);
+int  trt_kbdselect(KeySym, char *, int);
 
 int isboxdraw(Rune);
 ushort boxdrawindex(const Glyph *);
