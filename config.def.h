@@ -319,8 +319,6 @@ static Shortcut shortcuts[] = {
   { ControlMask|Mod1Mask, XK_bracketleft, autocomplete,   { .i = ACMPL_FUZZY_WWORD } },
   /* undo the completion (must be used right after a completion) */
   { ControlMask|Mod1Mask, XK_equal,       autocomplete,   { .i = ACMPL_UNDO        } },
-  /* Keyboard select - https://st.suckless.org/patches/keyboard_select */
-  { TERMMOD,              XK_S,      keyboard_select,{.i =  0} },
   /* Transparency */
   { MODKEY,		XK_s,		changealpha,	{.f = -0.05} },
   { MODKEY,		XK_a,		changealpha,	{.f = +0.05} },

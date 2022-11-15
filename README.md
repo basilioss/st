@@ -67,7 +67,6 @@ Add `st.url = "github:siduck/st";` to your inputs and install `inputs.st.package
 ## New patches:
 
 - [autocomplete](https://st.suckless.org/patches/autocomplete/) (Complete the currently typed word using the other words visible in the st window)
-- [keyboard select](https://st.suckless.org/patches/keyboard_select/) (Select and copy text with keyboard shortcuts)
 
 ## Xresources live-reload
 
